@@ -13,11 +13,22 @@ using namespace std;
 
 /*takeaways
   - DP
+  - consider one type of coins at a time
+  - dp[amount] = min(dp[amount],dp[amount-coin value]
   - time complexity : O(n*amount)
   - space complexity: O(amount)
 */
 int Solution::coinChange(vector<int> &coins, int amount)
 {
+  /* very important to initialize everything to INT_MAX
+     - if we look at the coin with a value of 5 first,
+       we won't be about to come up with the amount
+       1..4, so we should not update dp[0]...dp[4]
+     - in this case, other coins would know no one
+       has touched them yet as their value remain
+       INT_MAX
+
+  */
   auto dp = vector<int>(amount + 1, INT_MAX);
   /* index is the amount, value is the min number
      of denominations
@@ -25,9 +36,9 @@ int Solution::coinChange(vector<int> &coins, int amount)
   dp[0] = 0;
 
   /* consider one denomination at a time */
-  for (auto coin : coins)
+  for (auto value : coins)
     /* add just one coin to every possible different amount */
-    for (auto amt = coin; amt <= amount; amt++)
+    for (auto amt = value; amt <= amount; amt++)
       /* other type of coins need to be able to come up with
          the previous sum (amt-coin) first
          - for example if the denomination is 5 and the sum
@@ -38,9 +49,13 @@ int Solution::coinChange(vector<int> &coins, int amount)
            produce the amount 1 yet or not yet.
          - so in the case we will not update dp[6]
       */
-      if (dp[amt - coin] != INT_MAX)
-        /* add one coin */
-        dp[amt] = min(dp[amt], dp[amt - coin] + 1);
+      if (dp[amt - value] != INT_MAX)
+        /* add one coin
+           - there might be  different ways to get to amt
+           - amount 5 = 5, 1+1+1+1+1,...
+           - so we need to keep the one uses min number of coins
+        */
+        dp[amt] = min(dp[amt], dp[amt - value] + 1);
 
   return dp[amount] == INT_MAX ? -1 : dp[amount];
 }
