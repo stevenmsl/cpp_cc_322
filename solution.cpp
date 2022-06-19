@@ -23,16 +23,18 @@ int Solution::coinChange(vector<int> &coins, int amount)
   /* very important to initialize everything to INT_MAX
      - if we look at the coin with a value of 5 first,
        we won't be about to come up with the amount
-       1..4, so we should not update dp[0]...dp[4]
+       1..4, so we should not update dp[1]...dp[4]
      - in this case, other coins would know no one
        has touched them yet as their value remain
        INT_MAX
 
   */
-  auto dp = vector<int>(amount + 1, INT_MAX);
   /* index is the amount, value is the min number
-     of denominations
-  */
+    of denominations
+ */
+  auto dp = vector<int>(amount + 1, INT_MAX);
+
+  /* base case */
   dp[0] = 0;
 
   /* consider one denomination at a time */
@@ -40,7 +42,7 @@ int Solution::coinChange(vector<int> &coins, int amount)
     /* add just one coin to every possible different amount */
     for (auto amt = value; amt <= amount; amt++)
       /* other type of coins need to be able to come up with
-         the previous sum (amt-coin) first
+         the previous sum (amt-value) first
          - for example if the denomination is 5 and the sum
            we are looking at is 6
          - in other words, we are evaluating dp[6] by adding
